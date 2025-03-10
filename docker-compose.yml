@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  # 기본 SSH 서버 설정
+  ros-ssh:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros-ssh:latest
+    container_name: ros-ssh-container-new
+    ports:
+      - "2225:2222"
+    restart: unless-stopped
+  
+  # CAN 인터페이스 접근 + SSH 서버
+  # can0 네트워크 인터페이스를 사용하는 방식으로 변경
+  ros-ssh-can:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros-ssh:latest
+    container_name: ros-ssh-can-container
+    # 호스트 네트워크 모드에서는 포트 매핑을 사용할 수 없음
+    # 컨테이너의 SSH 서버는 호스트의 2222 포트에서 실행됨
+    # 호스트의 SSH 서버(22번 포트)와 충돌하지 않음
+    network_mode: host
+    privileged: true
+    restart: unless-stopped
+  
+  # 호스트 네트워크 사용 + SSH 서버
+  ros-ssh-host-network:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros-ssh:latest
+    container_name: ros-ssh-host-network-container
+    network_mode: host
+    restart: unless-stopped
+  
+  # 특권 모드 + SSH 서버
+  ros-ssh-privileged:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros-ssh:latest
+    container_name: ros-ssh-privileged-container
+    ports:
+      - "2224:2222"
+    privileged: true
+    restart: unless-stopped
+  
+  # 모든 옵션 조합 (가장 권한이 많은 설정)
+  ros-ssh-all:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros-ssh:latest
+    container_name: ros-ssh-all-container
+    network_mode: host
+    privileged: true
+    restart: unless-stopped 
