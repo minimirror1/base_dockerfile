@@ -8,8 +8,7 @@ services:
       dockerfile: Dockerfile
     image: ros-canmanager:latest
     container_name: ros-canmanager-container
-    ports:
-      - "2223:2222"
+    network_mode: host  # 호스트 네트워크 모드 사용
     restart: unless-stopped
     privileged: true  # CAN 장치 접근을 위한 권한 부여
     volumes:

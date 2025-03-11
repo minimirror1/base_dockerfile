@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     can-utils \
     usbutils \
     udev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Python 패키지 설치
@@ -47,6 +48,13 @@ WORKDIR /workspace
 
 # ROS 환경 설정
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+
+# ROS 작업 공간 생성 및 GitHub 저장소 클론
+RUN mkdir -p ~/ros_ws/src && \
+    cd ~/ros_ws/src && \
+    git clone https://github.com/minimirror1/canopen_manager.git && \
+    cd ~/ros_ws && \
+    /bin/bash -c "source /opt/ros/melodic/setup.bash && catkin_make"
 
 # 시작 스크립트 생성
 RUN echo '#!/bin/bash\n\
@@ -77,6 +85,9 @@ if [ -n "$CAN_DEVICE" ]; then\n\
 else\n\
   echo "MCS 장치를 찾을 수 없습니다."\n\
 fi\n\
+\n\
+# ROS 작업 공간 설정 추가\n\
+echo "source ~/ros_ws/devel/setup.bash" >> ~/.bashrc\n\
 \n\
 tail -f /dev/null' > /entrypoint.sh && \
     chmod +x /entrypoint.sh
