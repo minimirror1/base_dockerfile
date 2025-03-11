@@ -38,10 +38,10 @@ RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/
 # X11 포워딩 허용
 RUN sed -i 's/#X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config
 # SSH 포트 변경
-RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
+RUN sed -i 's/#Port 22/Port 2225/' /etc/ssh/sshd_config
 
 # SSH 연결을 위한 포트 노출
-EXPOSE 2222
+EXPOSE 2225
 
 # 작업 디렉토리 설정
 WORKDIR /workspace

@@ -9,7 +9,10 @@ services:
     image: ros-canmanager:latest
     container_name: ros-canmanager-container
     network_mode: host  # 호스트 네트워크 모드 사용
+    # ports:  # 호스트 네트워크 모드에서는 포트 매핑이 필요 없음
+    #   - "2225:2225"
     restart: unless-stopped
     privileged: true  # CAN 장치 접근을 위한 권한 부여
     volumes:
       - ./workspace:/workspace  # 작업 디렉토리 마운트
+      - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
