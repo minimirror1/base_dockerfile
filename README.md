@@ -6,13 +6,13 @@
 
 - ROS Melodic 환경
 - CAN 통신 도구 (can-utils, canopen)
-- SSH 서버 (포트 2222)
+- SSH 서버 (포트 2225)
 - MCS 장치 자동 감지 및 설정 (vendor ID: 16d0)
 
 ## 이미지 빌드 방법
 
 ```bash
-docker build -t ros_melodic_can_env .
+docker build -t ros-canmanager .
 ```
 
 ## 호스트 시스템에서 CAN 인터페이스 설정
@@ -51,7 +51,13 @@ ip link show can0
 MCS 장치를 사용하기 위해서는 컨테이너를 `--privileged` 모드로 실행해야 합니다:
 
 ```bash
-docker run -it --privileged -p 2222:2222 --network=host ros_melodic_can_env
+docker run -it --privileged -p 2225:2225 --network=host ros-canmanager
+```
+
+또는 docker-compose를 사용하여 실행할 수 있습니다:
+
+```bash
+docker-compose up -d
 ```
 
 `--network=host` 옵션을 사용하면 호스트 시스템의 네트워크 인터페이스(can0 포함)를 컨테이너에서 직접 사용할 수 있습니다.
@@ -81,7 +87,7 @@ cansend can0 123#DEADBEEF
 ## SSH 접속 방법
 
 ```bash
-ssh -p 2222 root@<호스트_IP>
+ssh -p 2225 root@<호스트_IP>
 ```
 
 기본 비밀번호: 7788 

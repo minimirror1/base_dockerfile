@@ -5,7 +5,7 @@ services:
   ros-canmanager:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.canmanager
     image: ros-canmanager:latest
     container_name: ros-canmanager-container
     network_mode: host  # 호스트 네트워크 모드 사용
