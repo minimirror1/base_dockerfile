@@ -26,6 +26,13 @@ RUN apt-get update && apt-get install -y \
     wget \
     apt-transport-https \
     gnupg \
+    x11-apps \
+    x11-utils \
+    libx11-dev \
+    libxext-dev \
+    libxtst-dev \
+    libxrender-dev \
+    libxrandr-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Sublime Text 설치
