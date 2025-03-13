@@ -1,0 +1,110 @@
+# 베이스 이미지 설정
+FROM osrf/ros:noetic-desktop-full
+
+# 메타데이터 설정
+LABEL maintainer="사용자 이메일"
+LABEL version="1.0"
+LABEL description="ROS Melodic 환경 기반 도커 이미지"
+
+# 환경 변수 설정
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Python 3.10 저장소 추가 및 설치
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.10 python3.10-dev python3.10-distutils
+
+# Python 대체 설정
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2 && \
+    echo "2" | update-alternatives --config python3 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1 && \
+    update-alternatives --set python /usr/bin/python3.10
+
+# 시스템 업데이트 및 필요한 패키지 설치
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-pip \
+    openssh-server \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    kmod \
+    can-utils \
+    usbutils \
+    udev \
+    git \
+    wget \
+    apt-transport-https \
+    gnupg \
+    x11-apps \
+    x11-utils \
+    libx11-dev \
+    libxext-dev \
+    libxtst-dev \
+    libxrender-dev \
+    libxrandr-dev \
+    # MuJoCo 의존성 패키지 추가
+    libgl1-mesa-dev \
+    libgl1-mesa-glx \
+    libglew-dev \
+    libosmesa6-dev \
+    patchelf \
+    && rm -rf /var/lib/apt/lists/*
+
+# pip 최신 버전 설치
+RUN wget https://bootstrap.pypa.io/get-pip.py && \
+    python3.10 get-pip.py && \
+    rm get-pip.py
+
+# Python 패키지 설치
+RUN python3.10 -m pip install canopen PySide6 && \
+    # NumPy 설치 문제 해결을 위해 먼저 제거 후 재설치
+    python3.10 -m pip uninstall -y numpy && \
+    python3.10 -m pip install numpy && \
+    # MuJoCo 설치
+    python3.10 -m pip install mujoco
+
+# Sublime Text 설치
+RUN wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add - && \
+    echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list && \
+    apt-get update && \
+    apt-get install -y sublime-text && \
+    rm -rf /var/lib/apt/lists/*
+
+# SSH 서버 설정
+RUN mkdir /var/run/sshd
+RUN echo 'root:7788' | chpasswd
+# SSH 루트 로그인 허용 설정
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# SSH 패스워드 인증 허용
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# X11 포워딩 허용
+RUN sed -i 's/#X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config
+# SSH 포트 변경
+RUN sed -i 's/#Port 22/Port 2235/' /etc/ssh/sshd_config
+
+# SSH 연결을 위한 포트 노출
+EXPOSE 2235
+
+# 작업 디렉토리 설정
+WORKDIR /workspace
+
+# ROS 환경 설정
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+
+# ROS 작업 공간 생성 및 GitHub 저장소 클론
+RUN mkdir -p ~/ros_ws/src && \
+    cd ~/ros_ws/src && \
+    git clone https://github.com/minimirror1/canopen_manager.git && \
+    cd ~/ros_ws && \
+    /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
+# 시작 스크립트 복사
+COPY entrypoint.canmanager.sh /entrypoint.canmanager.sh
+RUN chmod +x /entrypoint.canmanager.sh
+
+# 컨테이너 시작 시 SSH 서버 실행
+ENTRYPOINT ["/entrypoint.canmanager.sh"]

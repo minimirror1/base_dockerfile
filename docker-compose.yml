@@ -21,3 +21,24 @@ services:
       - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
       - /tmp/.X11-unix:/tmp/.X11-unix  # X11 소켓 공유
       - ${XAUTHORITY:-~/.Xauthority}:/tmp/.Xauthority:ro  # Xauthority 파일 공유
+
+
+  ros-mujoco:
+    build:
+      context: .
+      dockerfile: Dockerfile.mujoco
+    image: ros-mujoco:latest
+    container_name: ros-mujoco-container
+    network_mode: host  # 호스트 네트워크 모드 사용
+    # ports:  # 호스트 네트워크 모드에서는 포트 매핑이 필요 없음
+    #   - "2235:2235"
+    restart: unless-stopped
+    privileged: true  # CAN 장치 접근을 위한 권한 부여
+    environment:
+      - DISPLAY=:10 # 호스트에서 사용하는 DISPLAY 환경 변수 설정 번호는 호스트에 맞게 변경
+      - XAUTHORITY=/tmp/.Xauthority
+    volumes:
+      - ./workspace:/workspace  # 작업 디렉토리 마운트
+      - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
+      - /tmp/.X11-unix:/tmp/.X11-unix  # X11 소켓 공유
+      - ${XAUTHORITY:-~/.Xauthority}:/tmp/.Xauthority:ro  # Xauthority 파일 공유
