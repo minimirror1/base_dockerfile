@@ -103,8 +103,8 @@ RUN mkdir -p ~/ros_ws/src && \
     /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # 시작 스크립트 복사
-COPY entrypoint.canmanager.sh /entrypoint.canmanager.sh
-RUN chmod +x /entrypoint.canmanager.sh
+COPY entrypoint.mujoco.sh /entrypoint.mujoco.sh
+RUN chmod +x /entrypoint.mujoco.sh
 
 # 컨테이너 시작 시 SSH 서버 실행
-ENTRYPOINT ["/entrypoint.canmanager.sh"]
+ENTRYPOINT ["/entrypoint.mujoco.sh"]
