@@ -2,6 +2,47 @@
 
 이 프로젝트는 ROS(Robot Operating System) 환경과 MuJoCo 시뮬레이션 환경을 위한 도커 이미지를 제공합니다.
 
+# 빠른 시작
+
+## MuJoCo 컨테이너 빌드 및 실행
+```bash
+# MuJoCo 이미지 빌드
+docker-compose build ros-mujoco
+
+# MuJoCo 컨테이너 실행
+docker-compose up -d ros-mujoco
+
+# 컨테이너 접속
+docker exec -it ros-mujoco-container bash
+```
+
+## CAN 매니저 컨테이너 빌드 및 실행
+```bash
+# CAN 매니저 이미지 빌드
+docker-compose build ros-canmanager
+
+# CAN 매니저 컨테이너 실행
+docker-compose up -d ros-canmanager
+
+# 컨테이너 접속
+docker exec -it ros-canmanager-container bash
+```
+
+## 모든 컨테이너 관리
+```bash
+# 모든 이미지 빌드
+docker-compose build
+
+# 모든 컨테이너 실행
+docker-compose up -d
+
+# 모든 컨테이너 중단 및 제거
+docker-compose down
+
+# 고아 컨테이너까지 모두 제거
+docker-compose down --remove-orphans
+```
+
 ## 주요 기능
 
 ### ROS CAN 매니저 이미지
