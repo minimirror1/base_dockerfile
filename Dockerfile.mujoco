@@ -20,6 +20,11 @@ RUN apt-get update && \
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-pip \
+    #ros
+    python3-catkin-tools \
+    ros-noetic-joy \
+    ros-noetic-effort-controllers \
+    #ssh
     openssh-server \
     net-tools \
     iputils-ping \
