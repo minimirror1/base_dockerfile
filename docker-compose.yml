@@ -16,7 +16,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
-      - ./workspace:/workspace  # 작업 디렉토리 마운트
+      - ${HOST_PATH:-./workspace}:${CONTAINER_PATH:-/workspace}
       - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
       - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 소켓 공유 (명시적 rw 권한)
 
@@ -35,6 +35,6 @@ services:
     environment:
       - DISPLAY=${DISPLAY}    
     volumes:
-      - ./workspace:/workspace  # 작업 디렉토리 마운트
+      - ${HOST_PATH:-./workspace}:${CONTAINER_PATH:-/workspace}
       - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
       - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 소켓 공유 (명시적 rw 권한)      

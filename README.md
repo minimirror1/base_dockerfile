@@ -11,6 +11,8 @@ docker-compose build ros-mujoco
 
 # MuJoCo 컨테이너 실행
 docker-compose up -d ros-mujoco
+DISPLAY=:10 docker-compose up ros-mujoco
+HOST_PATH=/home/user/my_workspace CONTAINER_PATH=/workspace docker-compose up ros-mujoco
 
 # 컨테이너 접속
 docker exec -it ros-mujoco-container bash
