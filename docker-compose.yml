@@ -15,12 +15,10 @@ services:
     privileged: true  # CAN 장치 접근을 위한 권한 부여
     environment:
       - DISPLAY=${DISPLAY}
-      - XAUTHORITY=/tmp/.Xauthority
     volumes:
       - ./workspace:/workspace  # 작업 디렉토리 마운트
       - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
-      - /tmp/.X11-unix:/tmp/.X11-unix  # X11 소켓 공유
-      - ${XAUTHORITY:-~/.Xauthority}:/tmp/.Xauthority:ro  # Xauthority 파일 공유
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 소켓 공유 (명시적 rw 권한)
 
 
   ros-mujoco:
@@ -35,9 +33,8 @@ services:
     restart: unless-stopped
     privileged: true  # CAN 장치 접근을 위한 권한 부여
     environment:
-      - DISPLAY=${DISPLAY}
-      - XAUTHORITY=/tmp/.Xauthority
+      - DISPLAY=${DISPLAY}    
     volumes:
       - ./workspace:/workspace  # 작업 디렉토리 마운트
       - /dev:/dev  # 호스트의 /dev 디렉토리를 컨테이너에 마운트하여 CAN 장치 접근
-      - /tmp/.X11-unix:/tmp/.X11-unix  # X11 소켓 공유      
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 소켓 공유 (명시적 rw 권한)      
